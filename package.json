@@ -26,5 +26,6 @@
         "> 1%",
         "maintained node versions",
         "not dead"
-    ]
+    ],
+    "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
