@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     //Timer
-    let deadline = `2020-04-13`;
+    let deadline = `2020-04-16`;
 
     function getTimeRemaining(endtime) {
         let timeDiff = Date.parse(endtime) - Date.parse(new Date()),
@@ -90,4 +90,38 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     setClock('timer', deadline);
+
+    //Modal
+    let more = document.querySelector(`.more`),
+        infoBlock = document.querySelector(`.info`),
+        infoMore = document.querySelectorAll(`.description-btn`),
+        overlay = document.querySelector(`.overlay`),
+        close = document.querySelector(`.popup-close`);
+
+    more.addEventListener(`click`, function(){
+        overlay.style.display = `block`;
+        this.classList.add(`more-splash`);
+        document.body.style.overflow = `hidden`;
+    });
+
+    infoBlock.addEventListener(`click`,function(event){
+        let target = event.target;
+        if (target && target.classList.contains(`description-btn`)){
+            overlay.style.display = `block`;
+            target.classList.add(`more-splash`);
+            document.body.style.overflow = `hidden`;   
+        }
+    });
+
+    close.addEventListener(`click`, function(){
+        overlay.style.display = `none`;
+        more.classList.remove(`more-splash`);
+        document.body.style.overflow = `visible`;
+        for (let i = 0; i < infoMore.length; i++) {
+            if (infoMore[i].classList.contains(`more-splash`)) {
+                infoMore[i].classList.remove(`more-splash`);
+                break;
+            }
+        }
+    });
 });
