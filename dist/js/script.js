@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 
     //Timer
-    let deadline = `2020-04-16`;
+    let deadline = `2020-04-23`;
 
     function getTimeRemaining(endtime) {
         let timeDiff = Date.parse(endtime) - Date.parse(new Date()),
@@ -199,8 +199,6 @@ window.addEventListener('DOMContentLoaded', function() {
         dots = document.querySelectorAll(`.dot`);
 
     showSlides(slideIndex);
-    switchPrevSlide();
-    switchNextSlide();
 
     function showSlides(n) {
         if (n > slides.length) {
@@ -217,15 +215,21 @@ window.addEventListener('DOMContentLoaded', function() {
         dots[slideIndex - 1].classList.add(`dot-active`);
     }
 
-    function switchPrevSlide() {
-        prev.addEventListener(`click`, () => {
-            showSlides(slideIndex -= 1);
-        });
-    }
+    prev.addEventListener(`click`, () => {
+        showSlides(slideIndex -= 1);
+    });
 
-    function switchNextSlide() {
-        next.addEventListener(`click`, () => {
-            showSlides(slideIndex += 1);
-        });
-    }
+    next.addEventListener(`click`, () => {
+        showSlides(slideIndex += 1);
+    });
+
+    dotsWrapper.addEventListener(`click`, function(event) {
+        let target = event.target;
+        for (let i = 0; i < dots.length + 1; i++) {
+            if (target.classList.contains('dot') && target == dots[i-1]) {
+                slideIndex=i;
+                showSlides(i);
+            }
+        }
+    });
 });
