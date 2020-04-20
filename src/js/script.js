@@ -49,7 +49,7 @@ window.addEventListener('DOMContentLoaded', function() {
             'hours': hours,
             'minutes': minutes,
             'seconds': seconds
-        }
+        };
     }
 
     function setClock(id, endTime) {
@@ -145,15 +145,15 @@ window.addEventListener('DOMContentLoaded', function() {
             form.appendChild(statusMessage);
 
             let formData = new FormData(form);
-            
+
             let obj = {};
             formData.forEach(function(value, key) {
                 obj[key] = value;
             });
             let json = JSON.stringify(obj);
 
-            function sendData(data){
-                return new Promise(function(resolve, reject){    
+            function sendData(data) {
+                return new Promise(function(resolve, reject) {
                     let request = new XMLHttpRequest();
 
                     request.open('POST', 'server.php');
@@ -167,21 +167,21 @@ window.addEventListener('DOMContentLoaded', function() {
                         } else {
                             reject();
                         }
-                    })
+                    });
                     request.send(data);
-                })
-            };
+                });
+            }
 
-            function deleteInputs(){
-              for (let i = 0; i < input.length; i++) {
+            function deleteInputs() {
+                for (let i = 0; i < input.length; i++) {
                     input[i].value = ``;
                 }
             }
             sendData(json)
-                .then(()=> statusMessage.textContent = message.loading)
-                .then(()=> statusMessage.textContent = message.success)
-                .catch(()=> statusMessage.textContent = message.failure)
-                .then(()=> deleteInputs())
+                .then(() => statusMessage.textContent = message.loading)
+                .then(() => statusMessage.textContent = message.success)
+                .catch(() => statusMessage.textContent = message.failure)
+                .then(() => deleteInputs());
         });
     }
 
@@ -189,4 +189,43 @@ window.addEventListener('DOMContentLoaded', function() {
 
     postForm(`#form`);
 
+    //Slider
+
+    let slideIndex = 1,
+        slides = document.querySelectorAll(`.slider-item`),
+        prev = document.querySelector(`.prev`),
+        next = document.querySelector('.next'),
+        dotsWrapper = document.querySelector(`.slider-dots`),
+        dots = document.querySelectorAll(`.dot`);
+
+    showSlides(slideIndex);
+    switchPrevSlide();
+    switchNextSlide();
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach((item) => item.style.display = `none`);
+        dots.forEach((item) => item.classList.remove(`dot-active`));
+
+        slides[slideIndex - 1].style.display = `block`;
+        dots[slideIndex - 1].classList.add(`dot-active`);
+    }
+
+    function switchPrevSlide() {
+        prev.addEventListener(`click`, () => {
+            showSlides(slideIndex -= 1);
+        });
+    }
+
+    function switchNextSlide() {
+        next.addEventListener(`click`, () => {
+            showSlides(slideIndex += 1);
+        });
+    }
 });

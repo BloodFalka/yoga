@@ -49,7 +49,7 @@ window.addEventListener('DOMContentLoaded', function() {
             'hours': hours,
             'minutes': minutes,
             'seconds': seconds
-        }
+        };
     }
 
     function setClock(id, endTime) {
@@ -144,10 +144,6 @@ window.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
             form.appendChild(statusMessage);
 
-            let request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-            request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-
             let formData = new FormData(form);
 
             let obj = {};
@@ -156,25 +152,80 @@ window.addEventListener('DOMContentLoaded', function() {
             });
             let json = JSON.stringify(obj);
 
-            request.send(json);
+            function sendData(data) {
+                return new Promise(function(resolve, reject) {
+                    let request = new XMLHttpRequest();
 
-            request.addEventListener(`readystatechange`, function() {
-                if (request.readyState < 4) {
-                    statusMessage.textContent = message.loading;
-                } else if (request.readyState === 4 && request.status == 200) {
-                    statusMessage.textContent = message.success;
-                } else {
-                    statusMessage.textContent = message.failure;
-                }
-            });
+                    request.open('POST', 'server.php');
+                    request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
 
-            for (let i = 0; i < input.length; i++) {
-                input[i].value = ``;
+                    request.addEventListener(`readystatechange`, function() {
+                        if (request.readyState < 4) {
+                            resolve();
+                        } else if (request.readyState === 4 && request.status == 200) {
+                            resolve();
+                        } else {
+                            reject();
+                        }
+                    });
+                    request.send(data);
+                });
             }
+
+            function deleteInputs() {
+                for (let i = 0; i < input.length; i++) {
+                    input[i].value = ``;
+                }
+            }
+            sendData(json)
+                .then(() => statusMessage.textContent = message.loading)
+                .then(() => statusMessage.textContent = message.success)
+                .catch(() => statusMessage.textContent = message.failure)
+                .then(() => deleteInputs());
         });
     }
+
     postForm(`.main-form`);
 
     postForm(`#form`);
 
+    //Slider
+
+    let slideIndex = 1,
+        slides = document.querySelectorAll(`.slider-item`),
+        prev = document.querySelector(`.prev`),
+        next = document.querySelector('.next'),
+        dotsWrapper = document.querySelector(`.slider-dots`),
+        dots = document.querySelectorAll(`.dot`);
+
+    showSlides(slideIndex);
+    switchPrevSlide();
+    switchNextSlide();
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach((item) => item.style.display = `none`);
+        dots.forEach((item) => item.classList.remove(`dot-active`));
+
+        slides[slideIndex - 1].style.display = `block`;
+        dots[slideIndex - 1].classList.add(`dot-active`);
+    }
+
+    function switchPrevSlide() {
+        prev.addEventListener(`click`, () => {
+            showSlides(slideIndex -= 1);
+        });
+    }
+
+    function switchNextSlide() {
+        next.addEventListener(`click`, () => {
+            showSlides(slideIndex += 1);
+        });
+    }
 });
